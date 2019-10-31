@@ -1,3 +1,4 @@
+const Joi = require('joi');
 const express = require('express');
 const app = express();
 
@@ -11,7 +12,7 @@ const fighters = [
 ]
 
 app.get('/', (req, res) => {
-    res.send('hello world');
+    res.send('Welcome to Sean\'s fighter api');
 });
 
 app.get('/api/fighters', (req, res) => {
@@ -28,6 +29,22 @@ app.get('/api/fighters/:id', (req, res) => {
 
 // POST method
 app.post('/api/fighters', (req, res) => {
+    // set schema
+    const schema = {
+        name: Joi.string().min(3).required()
+    };
+
+    // use joi to validate the reqeust body object and compare to the schema we set up
+    const result = Joi.validate(req.body, schema);
+    console.log(result);
+
+    //input validation 
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        //kick out of the post
+        return;
+    }
+
     const fighter = {
         id: fighters.length + 1, //increase the id value by 1. usually taken care of by database
         name: req.body.name  // use the name in the request body to assign
