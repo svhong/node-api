@@ -53,6 +53,31 @@ app.post('/api/fighters', (req, res) => {
     res.send(fighter); // send the fighter data back to the user
 });
 
+//PUT method to update db resource
+app.put('/api/fighter/:id', (req,res) => {
+    //look up the fighter
+    const fighter = fighters.find(f => f.id === parseInt(req.params.id))
+    // if fighter doesn't exist, return 404
+    if(!fighter){
+        res.status(404).send('The fighter with the given ID was not found');
+    }
+
+    const schema = {
+        name: Joi.string().min(3).required()
+    };
+    // validate
+    const result = Joi.validate(req.body, schema);
+    // if invalid, return 400 - bad request
+    if (result.error) {
+        res.status(400).send(result.error.details[0].message);
+        return;
+    }
+    // update fighter
+    fighter.name = req.body.name;
+    //return the updated fighter
+    res.send(fighter);
+})
+
 //PORT
 const port = process.env.PORT || 3000
 app.listen(port, () => { console.log(`Listening on port ${port}`) });
