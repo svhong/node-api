@@ -29,18 +29,11 @@ app.get('/api/fighters/:id', (req, res) => {
 
 // POST method
 app.post('/api/fighters', (req, res) => {
-    // set schema
-    const schema = {
-        name: Joi.string().min(3).required()
-    };
-
     // use joi to validate the reqeust body object and compare to the schema we set up
-    const result = Joi.validate(req.body, schema);
-    console.log(result);
-
+    const { error } = validateFighter(req.body);
     //input validation 
-    if (result.error) {
-        res.status(400).send(result.error.details[0].message);
+    if (error) {
+        res.status(400).send(error.details[0].message);
         //kick out of the post
         return;
     }
@@ -54,7 +47,7 @@ app.post('/api/fighters', (req, res) => {
 });
 
 //PUT method to update db resource
-app.put('/api/fighter/:id', (req,res) => {
+app.put('/api/fighters/:id', (req, res) => {
     //look up the fighter
     const fighter = fighters.find(f => f.id === parseInt(req.params.id))
     // if fighter doesn't exist, return 404
@@ -62,14 +55,11 @@ app.put('/api/fighter/:id', (req,res) => {
         res.status(404).send('The fighter with the given ID was not found');
     }
 
-    const schema = {
-        name: Joi.string().min(3).required()
-    };
+
     // validate
-    const result = Joi.validate(req.body, schema);
-    // if invalid, return 400 - bad request
-    if (result.error) {
-        res.status(400).send(result.error.details[0].message);
+    const { error } = validateFighter(req.body);
+    if (error) {
+        res.status(400).send(error.details[0].message);
         return;
     }
     // update fighter
@@ -77,6 +67,15 @@ app.put('/api/fighter/:id', (req,res) => {
     //return the updated fighter
     res.send(fighter);
 })
+
+// function to validate
+function validateFighter(fighter){
+    const schema = {
+        name: Joi.string().min(3).required()
+    };
+    return Joi.validate(fighter, schema);
+}
+
 
 //PORT
 const port = process.env.PORT || 3000
