@@ -1,6 +1,9 @@
 const express = require('express');
 const app = express();
 
+// JSON middleware
+app.use(express.json());
+
 const fighters = [
     { id:1, name: 'Darren Till'},
     { id:2, name: 'Henry Cejudo'},
@@ -20,7 +23,17 @@ app.get('/api/fighters/:id', (req, res) => {
     if(!fighter){
         res.status(404).send('The fighter with the given ID was not found');
     }
-    res.send(fighter)
+    res.send(fighter);
+});
+
+// POST method
+app.post('/api/fighters', (req, res) => {
+    const fighter = {
+        id: fighters.length + 1, //increase the id value by 1. usually taken care of by database
+        name: req.body.name  // use the name in the request body to assign
+    };
+    fighters.push(fighter); // push the fighter into the array of data
+    res.send(fighter); // send the fighter data back to the user
 });
 
 //PORT
