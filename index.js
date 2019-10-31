@@ -52,21 +52,36 @@ app.put('/api/fighters/:id', (req, res) => {
     const fighter = fighters.find(f => f.id === parseInt(req.params.id))
     // if fighter doesn't exist, return 404
     if(!fighter){
-        res.status(404).send('The fighter with the given ID was not found');
+        return res.status(404).send('The fighter with the given ID was not found');
     }
 
 
     // validate
     const { error } = validateFighter(req.body);
     if (error) {
-        res.status(400).send(error.details[0].message);
-        return;
+        return res.status(400).send(error.details[0].message);
     }
     // update fighter
     fighter.name = req.body.name;
     //return the updated fighter
     res.send(fighter);
 })
+
+app.delete('/api/fighters/:id', (req, res)=>{
+    // look up the figher
+    const fighter = fighters.find(f => f.id === parseInt(req.params.id))
+    // if fighter doesn't exist, return 404
+    if (!fighter){
+        return res.status(404).send('The fighter with that id was not found');   
+    }
+    // Delete
+    const index = fighters.indexOf(fighter);
+    fighters.splice(index,1);
+
+    // Return the same course
+    res.send(fighter)
+});
+
 
 // function to validate
 function validateFighter(fighter){
