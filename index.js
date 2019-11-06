@@ -1,3 +1,6 @@
+const startupDebugger = require('debug')('app:startup'); //debugger will replace console logs to test and debug code without removing from production
+const dbDebugger = require('debug')('app:db'); //debugger for database. to debug all debugs can set to DEBUG=*
+const config = require("config");
 const Joi = require("joi");
 const helmet = require("helmet");
 const morgan = require("morgan");
@@ -13,13 +16,21 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 app.use(helmet());
 
+// Configuration settings for environment variables using config testing set the env variable using export NODE_ENV=[foobar]--------------------------------
+console.log('Application Name: ' + config.get('name'));
+console.log('Mail Server: ' + config.get('mail.host'))
+console.log('Mail Password: ' + config.get('mail.password'));
+
 if (app.get('env') === 'development') {
   // shows info in the terminal regarding requests
   app.use(morgan("tiny"));
+  startupDebugger('Morgan enabled...');
 }
 
 
 
+// current mock data that
+dbDebugger('DB fired up');
 const fighters = [
   { id: 1, name: "Darren Till" },
   { id: 2, name: "Henry Cejudo" },
