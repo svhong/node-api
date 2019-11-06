@@ -1,0 +1,6 @@
+{
+    "name": "Sean's Figher API - Production",
+    "mail": {
+        "host": "prod-mail-server"
+    }
+}
